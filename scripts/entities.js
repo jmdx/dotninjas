@@ -34,11 +34,11 @@ var dotNinjas = (function(dn) {
   // Constructs a rectangular entity to be drawn on the grid configured in
   // gameConfig.
   function GameEntity(xPos, yPos, color) {
+    this.color = color || gameConfig.entityColor;
     this.moveTo({
       x: xPos || 0,
       y: yPos || 0
     });
-    this.color = color || gameConfig.entityColor;
   }
   // Moves this entity to newPosition, where newPosition is of the form
   // {x: <Number>, y: <Number>}
