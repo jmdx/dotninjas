@@ -7,7 +7,9 @@ var dotNinjas = (function(dn) {
     bgColor: "black",
     rows: 5,
     cols: 7,
-    dotPadding: 5
+    dotPadding: 5,
+    updateInterval: 300,
+    wrapX: true
   }
   gameConfig.rowHeight = Math.round(canvas.height / gameConfig.rows),
   gameConfig.columnWidth = Math.round(canvas.width / gameConfig.cols);
@@ -21,6 +23,12 @@ var dotNinjas = (function(dn) {
     40: down,
     37: left,
     39: right
+  }
+  // A more mainstream inverse of a % b, where if a is negative, then mod(a, b)
+  // is still within [0, b), but unlike in Math.mod is the the additive inverse
+  // of -a.
+  function mod(a, b) {
+    return b * (a / b - Math.floor(a / b));
   }
   function drawDot(coords, color) {
     ctx.fillStyle = color;
@@ -43,12 +51,14 @@ var dotNinjas = (function(dn) {
   // Moves this entity to newPosition, where newPosition is of the form
   // {x: <Number>, y: <Number>}
   GameEntity.prototype.moveTo = function(newPosition) {
-    if(newPosition.x >= 0 && newPosition.x < gameConfig.cols) {
-      if(newPosition.y >= 0 && newPosition.y < gameConfig.rows) {
+    var xWithinBounds = newPosition.x >= 0 && newPosition.x < gameConfig.cols,
+        yWithinBounds = newPosition.y >= 0 && newPosition.y < gameConfig.rows;
+    if(gameConfig.wrapX || xWithinBounds) {
+      if(gameConfig.wrapY || yWithinBounds) {
         this.prevX = this.x;
         this.prevY = this.y;
-        this.x = newPosition.x;
-        this.y = newPosition.y;
+        this.x = mod(newPosition.x, gameConfig.cols);
+        this.y = mod(newPosition.y, gameConfig.rows);
         this.draw();
       }
     }
@@ -70,11 +80,14 @@ var dotNinjas = (function(dn) {
   // A GameEntity that responds to keypresses.
   function PlayerEntity(xPos, yPos, color) {
     GameEntity.call(this, xPos, yPos, color);
+    this.currentDirection = right;
     var player = this;
     $(document).keydown(function(event) {
-      var direction = keys[event.which];
-      player.moveBy(direction);
+      player.currentDirection = keys[event.which];
     });
+    setInterval(function() {
+      player.moveBy(player.currentDirection);
+    }, gameConfig.updateInterval);
   }
   PlayerEntity.prototype = Object.create(GameEntity.prototype);
 
