@@ -85,7 +85,7 @@ var dotNinjas = (function(dn) {
     this.currentDirection = right;
     var player = this;
     $(document).keydown(function(event) {
-      player.currentDirection = keys[event.which];
+      player.currentDirection = keys[event.which] || player.currentDirection;
     });
   }
   PlayerEntity.prototype = Object.create(GameEntity.prototype);
