@@ -1,6 +1,8 @@
 var dotNinjas = (function(dn) {
   "use strict";
   var canvas = document.getElementById("gameCanvas");
+  canvas.width = 500;
+  canvas.height = 500;
   var ctx = canvas.getContext("2d");
   var gameConfig = {
     entityColor: "white",
