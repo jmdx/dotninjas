@@ -1,5 +1,13 @@
 (function() {
   "use strict";
-  new dotNinjas.PlayerEntity(2, 2);
-  new dotNinjas.EnemyEntity(1, 1);
+  var player = new dotNinjas.PlayerEntity(dotNinjas.config.cols - 1,
+                                          dotNinjas.config.rows - 1,
+                                          "green"),
+      enemy = new dotNinjas.EnemyEntity(0, 0, player),
+      updateableEntities = [player, enemy];
+  setInterval(function() {
+    _(updateableEntities).forEach(function(entity) {
+      entity.update();
+    });
+  }, dotNinjas.config.updateInterval);
 }) ();

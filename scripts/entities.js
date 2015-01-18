@@ -10,7 +10,7 @@ var dotNinjas = (function(dn) {
     rows: 5,
     cols: 7,
     dotPadding: 5,
-    updateInterval: 300,
+    updateInterval: 500,
     wrapX: true
   }
   gameConfig.rowHeight = Math.round(canvas.height / gameConfig.rows),
@@ -87,20 +87,38 @@ var dotNinjas = (function(dn) {
     $(document).keydown(function(event) {
       player.currentDirection = keys[event.which];
     });
-    setInterval(function() {
-      player.moveBy(player.currentDirection);
-    }, gameConfig.updateInterval);
   }
   PlayerEntity.prototype = Object.create(GameEntity.prototype);
+  PlayerEntity.prototype.update = function() {
+    this.moveBy(this.currentDirection);
+  }
 
-  // A GameEntity that follows another entity.  TODO add this logic
-  function EnemyEntity(xPos, yPos, color, playerToFollow) {
+  // A GameEntity that follows another entity.
+  function EnemyEntity(xPos, yPos, playerToFollow, color) {
     GameEntity.call(this, xPos, yPos, color);
+    this.attractor = playerToFollow;
   }
   EnemyEntity.prototype = Object.create(GameEntity.prototype);
+  EnemyEntity.prototype.update = function() {
+    var xDistance = this.attractor.x - this.x,
+        yDistance = this.attractor.y - this.y;
+    if(Math.abs(xDistance) > Math.abs(yDistance)){
+      this.moveBy({
+        x: xDistance > 0 ? 1 : -1,
+        y: 0
+      });
+    }
+    else {
+      this.moveBy({
+        x: 0,
+        y: yDistance > 0 ? 1 : -1
+      });
+    }
+  }
   // TODO: maybe use requireJS for this?
   dn.GameEntity = GameEntity;
   dn.PlayerEntity = PlayerEntity;
   dn.EnemyEntity = EnemyEntity;
+  dn.config = gameConfig;
   return dn;
 }) (dotNinjas || {});
