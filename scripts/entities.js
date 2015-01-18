@@ -43,15 +43,13 @@ var dotNinjas = (function(dn) {
   // Moves this entity to newPosition, where newPosition is of the form
   // {x: <Number>, y: <Number>}
   GameEntity.prototype.moveTo = function(newPosition) {
-    if(!!newPosition.x && !!newPosition.y) {
-      if(newPosition.x >= 0 && newPosition.x < gameConfig.cols) {
-        if(newPosition.y >= 0 && newPosition.y < gameConfig.rows) {
-          this.prevX = this.x;
-          this.prevY = this.y;
-          this.x = newPosition.x;
-          this.y = newPosition.y;
-          this.draw();
-        }
+    if(newPosition.x >= 0 && newPosition.x < gameConfig.cols) {
+      if(newPosition.y >= 0 && newPosition.y < gameConfig.rows) {
+        this.prevX = this.x;
+        this.prevY = this.y;
+        this.x = newPosition.x;
+        this.y = newPosition.y;
+        this.draw();
       }
     }
   }
