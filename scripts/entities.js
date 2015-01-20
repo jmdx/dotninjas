@@ -7,8 +7,8 @@ var dotNinjas = (function(dn) {
   var gameConfig = {
     entityColor: "white",
     bgColor: "black",
-    rows: 5,
-    cols: 7,
+    rows: 10,
+    cols: 15,
     dotPadding: 5,
     updateInterval: 500,
     wrapX: true
