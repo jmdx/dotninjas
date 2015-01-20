@@ -32,6 +32,19 @@ var dotNinjas = (function(dn) {
   function mod(a, b) {
     return b * (a / b - Math.floor(a / b));
   }
+  // Given two objects with attributes x and y, determines whether the x's and
+  // y's are within 0.0001 between each object.
+  // TODO: Maybe have a vector2d prototype?
+  function vectorEquals(u, v) {
+    var xDifference = u.x - v.x, yDifference = u.y - v.y;
+    return Math.abs(xDifference) < 0.0001 && Math.abs(yDifference) < 0.0001;
+  }
+  // Returns a random integer between min (included) and max (excluded)
+  // Using Math.round() will give you a non-uniform distribution!
+  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
   function drawDot(coords, color) {
     ctx.fillStyle = color;
     var rectX = coords.x * gameConfig.columnWidth + gameConfig.dotPadding;
@@ -61,7 +74,6 @@ var dotNinjas = (function(dn) {
         this.prevY = this.y;
         this.x = mod(newPosition.x, gameConfig.cols);
         this.y = mod(newPosition.y, gameConfig.rows);
-        this.draw();
       }
     }
   }
@@ -73,9 +85,11 @@ var dotNinjas = (function(dn) {
       y: this.y + delta.y
     });
   }
-  RectangularEntity.prototype.draw = function() {
+  RectangularEntity.prototype.clearPreviousDraw = function() {
     var prevCoords = {x: this.prevX, y: this.prevY};
     drawDot(prevCoords, gameConfig.bgColor);
+  }
+  RectangularEntity.prototype.draw = function() {
     drawDot(this, this.color);
   }
 
@@ -102,7 +116,7 @@ var dotNinjas = (function(dn) {
   EnemyEntity.prototype.update = function() {
     var xDistance = this.attractor.x - this.x,
         yDistance = this.attractor.y - this.y;
-    if(Math.abs(xDistance) < 0.001 && Math.abs(yDistance) < 0.001) {
+    if(vectorEquals(this, this.attractor)) {
       // This only happens when the player and enemy are in the same
       // spot, so the loss screen should eventually be triggered here.
       return;
@@ -120,10 +134,29 @@ var dotNinjas = (function(dn) {
       });
     }
   }
+
+  function CoinEntity(xPos, yPos, player, scoreCallback, color) {
+    RectangularEntity.call(this, xPos, yPos, color);
+    this.onScore = scoreCallback;
+    this.consumer = player;
+  }
+  CoinEntity.prototype = Object.create(RectangularEntity.prototype);
+  CoinEntity.prototype.update = function() {
+    if(vectorEquals(this, this.consumer)) {
+      this.moveTo({
+        x: getRandomInt(0, gameConfig.cols),
+        y: getRandomInt(0, gameConfig.rows)
+      });
+      if(this.onScore instanceof Function) {
+        this.onScore();
+      }
+    }
+  }
   // TODO: maybe use requireJS for this?
   dn.RectangularEntity = RectangularEntity;
   dn.PlayerEntity = PlayerEntity;
   dn.EnemyEntity = EnemyEntity;
+  dn.CoinEntity = CoinEntity;
   dn.config = gameConfig;
   return dn;
 }) (dotNinjas || {});
