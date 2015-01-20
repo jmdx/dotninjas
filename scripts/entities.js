@@ -26,7 +26,7 @@ var dotNinjas = (function(dn) {
     37: left,
     39: right
   }
-  // A more mainstream inverse of a % b, where if a is negative, then mod(a, b)
+  // A more mainstream version of a % b, where if a is negative, then mod(a, b)
   // is still within [0, b), but unlike in Math.mod is the the additive inverse
   // of -a.
   function mod(a, b) {
