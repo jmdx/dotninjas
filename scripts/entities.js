@@ -102,6 +102,11 @@ var dotNinjas = (function(dn) {
   EnemyEntity.prototype.update = function() {
     var xDistance = this.attractor.x - this.x,
         yDistance = this.attractor.y - this.y;
+    if(Math.abs(xDistance) < 0.001 && Math.abs(yDistance) < 0.001) {
+      // This only happens when the player and enemy are in the same
+      // spot, so the loss screen should eventually be triggered here.
+      return;
+    }
     if(Math.abs(xDistance) > Math.abs(yDistance)){
       this.moveBy({
         x: xDistance > 0 ? 1 : -1,
