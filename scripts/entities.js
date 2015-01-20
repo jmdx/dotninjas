@@ -107,7 +107,7 @@ var dotNinjas = (function(dn) {
       // spot, so the loss screen should eventually be triggered here.
       return;
     }
-    if(Math.abs(xDistance) > Math.abs(yDistance)){
+    if(Math.abs(xDistance) > Math.abs(yDistance)) {
       this.moveBy({
         x: xDistance > 0 ? 1 : -1,
         y: 0
