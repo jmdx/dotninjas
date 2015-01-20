@@ -43,7 +43,7 @@ var dotNinjas = (function(dn) {
 
   // Constructs a rectangular entity to be drawn on the grid configured in
   // gameConfig.
-  function GameEntity(xPos, yPos, color) {
+  function RectangularEntity(xPos, yPos, color) {
     this.color = color || gameConfig.entityColor;
     this.moveTo({
       x: xPos || 0,
@@ -52,7 +52,7 @@ var dotNinjas = (function(dn) {
   }
   // Moves this entity to newPosition, where newPosition is of the form
   // {x: <Number>, y: <Number>}
-  GameEntity.prototype.moveTo = function(newPosition) {
+  RectangularEntity.prototype.moveTo = function(newPosition) {
     var xWithinBounds = newPosition.x >= 0 && newPosition.x < gameConfig.cols,
         yWithinBounds = newPosition.y >= 0 && newPosition.y < gameConfig.rows;
     if(gameConfig.wrapX || xWithinBounds) {
@@ -67,38 +67,38 @@ var dotNinjas = (function(dn) {
   }
   // Moves this entity by delta, where delta is of the form
   // {x: <Number>, y: <Number>}
-  GameEntity.prototype.moveBy = function(delta) {
+  RectangularEntity.prototype.moveBy = function(delta) {
     this.moveTo({
       x: this.x + delta.x,
       y: this.y + delta.y
     });
   }
-  GameEntity.prototype.draw = function() {
+  RectangularEntity.prototype.draw = function() {
     var prevCoords = {x: this.prevX, y: this.prevY};
     drawDot(prevCoords, gameConfig.bgColor);
     drawDot(this, this.color);
   }
 
-  // A GameEntity that responds to keypresses.
+  // A RectangularEntity that responds to keypresses.
   function PlayerEntity(xPos, yPos, color) {
-    GameEntity.call(this, xPos, yPos, color);
+    RectangularEntity.call(this, xPos, yPos, color);
     this.currentDirection = right;
     var player = this;
     $(document).keydown(function(event) {
       player.currentDirection = keys[event.which] || player.currentDirection;
     });
   }
-  PlayerEntity.prototype = Object.create(GameEntity.prototype);
+  PlayerEntity.prototype = Object.create(RectangularEntity.prototype);
   PlayerEntity.prototype.update = function() {
     this.moveBy(this.currentDirection);
   }
 
-  // A GameEntity that follows another entity.
+  // A RectangularEntity that follows another entity.
   function EnemyEntity(xPos, yPos, playerToFollow, color) {
-    GameEntity.call(this, xPos, yPos, color);
+    RectangularEntity.call(this, xPos, yPos, color);
     this.attractor = playerToFollow;
   }
-  EnemyEntity.prototype = Object.create(GameEntity.prototype);
+  EnemyEntity.prototype = Object.create(RectangularEntity.prototype);
   EnemyEntity.prototype.update = function() {
     var xDistance = this.attractor.x - this.x,
         yDistance = this.attractor.y - this.y;
@@ -121,7 +121,7 @@ var dotNinjas = (function(dn) {
     }
   }
   // TODO: maybe use requireJS for this?
-  dn.GameEntity = GameEntity;
+  dn.RectangularEntity = RectangularEntity;
   dn.PlayerEntity = PlayerEntity;
   dn.EnemyEntity = EnemyEntity;
   dn.config = gameConfig;
